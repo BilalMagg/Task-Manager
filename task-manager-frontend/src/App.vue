@@ -1,26 +1,31 @@
 <template>
-  <img alt="Vue logo" src="./assets/logo.png">
-  <HelloWorld msg="Welcome to Your Vue.js App"/>
+  <div>
+    <h1>Task Manager</h1>
+    <p :style="{ color: dbStatus === 'Database is online' ? 'green' : 'red' }">
+      {{ dbStatus }}
+    </p>
+    <TaskList />
+  </div>
 </template>
 
 <script>
-import HelloWorld from './components/HelloWorld.vue'
+import TaskList from './components/TaskList.vue';
+import axios from 'axios';
 
 export default {
-  name: 'App',
-  components: {
-    HelloWorld
+  components: { TaskList },
+  data() {
+    return {
+      dbStatus: 'Checking...',
+    };
+  },
+  async created() {
+    try {
+      const response = await axios.get('http://localhost:5000/status');
+      this.dbStatus = response.data.status;
+    } catch (error) {
+      this.dbStatus = 'Database is offline';
+    }
   }
-}
+};
 </script>
-
-<style>
-#app {
-  font-family: Avenir, Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
-  margin-top: 60px;
-}
-</style>
